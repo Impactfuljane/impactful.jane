@@ -46,7 +46,7 @@
         }
         
         .modal {
-            transition: all 0.3s ease-out;
+            transition: all 0.3s;
             opacity: 0;
             visibility: hidden;
         }
@@ -327,9 +327,28 @@
     <section class="py-16 bg-gradient-to-r from-purple-700 to-pink-500 text-white">
         <div class="container mx-auto px-6 text-center">
             <h2 class="text-3xl md:text-4xl font-bold mb-6">Ready to Begin Your Healing Journey?</h2>
-            <p class="text-xl mb-8 max-w-2xl mx-auto">Schedule a free discovery call to explore how we can work together.</p>
-            <button class="bg-white text-purple-800 px-8 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition duration-300">Book Your Free Session</button>
-        </div>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Schedule a discovery call to explore how we can work together.</p>
+            <form id="booking-form" action="/api/book" method="POST" class="bg-white bg-opacity-90 rounded-lg p-8 max-w-lg mx-auto text-left shadow-lg">
+                <div class="mb-4">
+                    <label for="name" class="block text-purple-800 font-semibold mb-2">Name</label>
+                    <input type="text" id="name" name="name" required class="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600">
+                </div>
+                <div class="mb-4">
+                    <label for="email" class="block text-purple-800 font-semibold mb-2">Email</label>
+                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600">
+                </div>
+                <div class="mb-4">
+                    <label for="date" class="block text-purple-800 font-semibold mb-2">Preferred Date</label>
+                    <input type="date" id="date" name="date" required class="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600">
+                </div>
+                <div class="mb-6">
+                    <label for="time" class="block text-purple-800 font-semibold mb-2">Preferred Time</label>
+                    <input type="time" id="time" name="time" required class="w-full px-4 py-2 border rounded-lg text-black focus:outline-none focus:ring-2 focus:ring-purple-600">
+                </div>
+                <button type="submit" class="bg-purple-800 text-white px-6 py-3 rounded-full font-semibold w-full hover:bg-purple-900 transition">Schedule Now</button>
+                <div id="booking-success" class="mt-4 text-green-600 text-center hidden"></div>
+            </form>
+        </div> 
     </section>
 
     <!-- Contact Section -->
@@ -348,11 +367,11 @@
                         <form>
                             <div class="mb-4">
                                 <label for="name" class="block text-gray-700 mb-2">Name</label>
-                                <input type="text" id="name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                <input type="text" id="contact-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
                             </div>
                             <div class="mb-4">
                                 <label for="email" class="block text-gray-700 mb-2">Email</label>
-                                <input type="email" id="email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
+                                <input type="email" id="contact-email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
                             </div>
                             <div class="mb-4">
                                 <label for="message" class="block text-gray-700 mb-2">Message</label>
@@ -462,69 +481,22 @@
         </div>
     </footer>
 
-    <!-- Modal -->
-    <div id="modal" class="modal fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20">
-        <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4">
-            <div class="p-6">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold text-purple-800">Schedule Your Free Session</h3>
-                    <button id="modal-close" class="text-gray-500 hover:text-gray-700">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                        </svg>
-                    </button>
-                </div>
-                <div class="mb-4">
-                    <label for="modal-name" class="block text-gray-700 mb-2">Name</label>
-                    <input type="text" id="modal-name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-                </div>
-                <div class="mb-4">
-                    <label for="modal-email" class="block text-gray-700 mb-2">Email</label>
-                    <input type="email" id="modal-email" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-                </div>
-                <div class="mb-6">
-                    <label for="modal-date" class="block text-gray-700 mb-2">Preferred Date</label>
-                    <input type="date" id="modal-date" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600">
-                </div>
-                <button class="btn-primary text-white px-6 py-3 rounded-full font-semibold w-full">Schedule Now</button>
-            </div>
-        </div>
-    </div>
-
     <script>
+    document.addEventListener('DOMContentLoaded', function() {
         // Mobile menu toggle
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
-        
         menuBtn.addEventListener('click', () => {
             mobileMenu.classList.toggle('hidden');
-        });
-
-        // Modal functionality
-        const modal = document.getElementById('modal');
-        const modalClose = document.getElementById('modal-close');
-        const bookButtons = document.querySelectorAll('[class*="Book Your"]');
-        
-        modalClose.addEventListener('click', () => {
-            modal.classList.remove('active');
-        });
-        
-        bookButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                modal.classList.add('active');
-            });
         });
 
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                
                 document.querySelector(this.getAttribute('href')).scrollIntoView({
                     behavior: 'smooth'
                 });
-                
-                // Close mobile menu if open
                 mobileMenu.classList.add('hidden');
             });
         });
@@ -536,13 +508,46 @@
                     entry.target.classList.add('animate-fadeIn');
                 }
             });
-        }, {
-            threshold: 0.1
-        });
+        }, { threshold: 0.1 });
 
         document.querySelectorAll('.transform-card, .testimonial-card, .hero-gradient h1, .hero-gradient p').forEach(element => {
             observer.observe(element);
         });
+
+        // Booking form functionality for inline form
+        const bookingForm = document.getElementById('booking-form');
+        const bookingSuccess = document.getElementById('booking-success');
+
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const date = document.getElementById('date').value;
+            const time = document.getElementById('time').value;
+
+            if (name && email && date && time) {
+                // Send data to backend
+                const response = await fetch('/api/book', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, date, time })
+                });
+                const result = await response.json();
+                bookingSuccess.textContent = result.message || `Thank you, ${name}! Your session is scheduled for ${date} at ${time}. We will contact you at ${email} to confirm.`;
+                bookingSuccess.classList.remove('hidden');
+                bookingForm.reset();
+                setTimeout(() => {
+                    bookingSuccess.classList.add('hidden');
+                }, 5000);
+            } else {
+                bookingSuccess.textContent = 'Please fill out all fields.';
+                bookingSuccess.classList.remove('hidden');
+                setTimeout(() => {
+                    bookingSuccess.classList.add('hidden');
+                }, 3000);
+            }
+        });
+    });
     </script>
 </body>
 </html>
